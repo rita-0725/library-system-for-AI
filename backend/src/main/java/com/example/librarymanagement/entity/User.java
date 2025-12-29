@@ -2,6 +2,8 @@ package com.example.librarymanagement.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 @Entity
 @Table(name = "users")
@@ -31,11 +33,31 @@ public class User {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     public enum Role {
-        STUDENT, TEACHER, ADMIN
+        STUDENT, TEACHER, ADMIN;
+        
+        @JsonValue
+        public String toValue() {
+            return this.name().toLowerCase();
+        }
+        
+        @JsonCreator
+        public static Role fromValue(String value) {
+            return Role.valueOf(value.toUpperCase());
+        }
     }
 
     public enum Status {
-        ACTIVE, BANNED
+        ACTIVE, BANNED;
+        
+        @JsonValue
+        public String toValue() {
+            return this.name().toLowerCase();
+        }
+        
+        @JsonCreator
+        public static Status fromValue(String value) {
+            return Status.valueOf(value.toUpperCase());
+        }
     }
 
     // Getters and Setters

@@ -1,8 +1,6 @@
 package com.example.librarymanagement.service;
 
 import com.example.librarymanagement.entity.Borrowing;
-import com.example.librarymanagement.entity.User;
-import com.example.librarymanagement.entity.Book;
 import com.example.librarymanagement.repository.BorrowingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,16 +19,16 @@ public class BorrowingService {
     @Autowired
     private BookService bookService;
 
-    public Borrowing borrowBook(User user, Book book) {
-        if (!bookService.isAvailable(book.getBookId())) {
+    public Borrowing borrowBook(Long userId, Long bookId) {
+        if (!bookService.isAvailable(bookId)) {
             throw new RuntimeException("Book not available");
         }
         Borrowing borrowing = new Borrowing();
-        borrowing.setUser(user);
-        borrowing.setBook(book);
+        borrowing.setUserId(userId);
+        borrowing.setBookId(bookId);
         borrowing.setBorrowDate(LocalDateTime.now());
         borrowing.setDueDate(LocalDateTime.now().plusDays(14)); // 14 days loan period
-        bookService.decreaseStock(book.getBookId());
+        bookService.decreaseStock(bookId);
         return borrowingRepository.save(borrowing);
     }
 
@@ -44,11 +42,11 @@ public class BorrowingService {
             long daysOverdue = ChronoUnit.DAYS.between(borrowing.getDueDate(), borrowing.getReturnDate());
             borrowing.setFine(BigDecimal.valueOf(daysOverdue * 0.5)); // 0.5 per day
         }
-        bookService.increaseStock(borrowing.getBook().getBookId());
+        bookService.increaseStock(borrowing.getBookId());
         return borrowingRepository.save(borrowing);
     }
 
     public List<Borrowing> getBorrowingsByUser(Long userId) {
-        return borrowingRepository.findByUser_UserId(userId);
+        return borrowingRepository.findByUserId(userId);
     }
 }

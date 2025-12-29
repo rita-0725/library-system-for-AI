@@ -18,6 +18,22 @@ public class UserService {
         if (existingUser != null) {
             throw new RuntimeException("用户名已存在");
         }
+        
+        // 确保角色和状态有默认值
+        if (user.getRole() == null) {
+            user.setRole(User.Role.STUDENT);
+        }
+        if (user.getStatus() == null) {
+            user.setStatus(User.Status.ACTIVE);
+        }
+        if (user.getCreatedAt() == null) {
+            user.setCreatedAt(java.time.LocalDateTime.now());
+        }
+        if (user.getUpdatedAt() == null) {
+            user.setUpdatedAt(java.time.LocalDateTime.now());
+        }
+        
+        // 加密密码
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         return userRepository.save(user);
     }

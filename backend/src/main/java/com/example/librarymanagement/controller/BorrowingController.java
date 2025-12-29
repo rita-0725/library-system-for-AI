@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins="*", maxAge=3600)
 public class BorrowingController {
 
     @Autowired
@@ -26,25 +27,25 @@ public class BorrowingController {
     private BookService bookService;
 
     @PostMapping("/borrow")
-    public ResponseEntity<Borrowing> borrowBook(@RequestBody BorrowRequest request) {
+    public ResponseEntity<?> borrowBook(@RequestBody BorrowRequest request) {
         try {
             User user = userService.findByUsername(request.getUsername());
             Book book = bookService.findById(request.getBookId());
             if (user == null || book == null) {
-                return ResponseEntity.badRequest().build();
+                return ResponseEntity.badRequest().body("User or Book not found");
             }
-            return ResponseEntity.ok(borrowingService.borrowBook(user, book));
+            return ResponseEntity.ok(borrowingService.borrowBook(user.getUserId(), book.getBookId()));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PostMapping("/return")
-    public ResponseEntity<Borrowing> returnBook(@RequestParam Long borrowingId) {
+    public ResponseEntity<?> returnBook(@RequestParam Long borrowingId) {
         try {
             return ResponseEntity.ok(borrowingService.returnBook(borrowingId));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

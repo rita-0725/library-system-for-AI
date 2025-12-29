@@ -43,7 +43,11 @@ export default {
         localStorage.setItem('role', 'user')
         this.$router.push('/')
       } catch (err) {
-        this.error = '用户名或密码错误'
+        if (err.response && err.response.status === 400) {
+          this.error = err.response.data
+        } else {
+          this.error = '用户名或密码错误'
+        }
       }
     }
   }

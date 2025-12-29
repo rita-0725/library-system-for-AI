@@ -10,6 +10,6 @@ import java.util.List;
 public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findByTitleContainingOrAuthorContainingOrIsbn(String title, String author, String isbn);
 
-    @Query("SELECT b FROM Book b WHERE b.title LIKE %:keyword% OR b.author LIKE %:keyword% OR b.isbn = :keyword")
+    @Query("SELECT b FROM Book b WHERE b.title LIKE %:keyword% OR b.author LIKE %:keyword% OR b.isbn LIKE %:keyword%")
     List<Book> searchBooks(@Param("keyword") String keyword);
 }
