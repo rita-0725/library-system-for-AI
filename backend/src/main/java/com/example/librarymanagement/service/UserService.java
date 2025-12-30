@@ -6,6 +6,9 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.time.LocalDateTime;
+
 @Service
 public class UserService {
 
@@ -43,6 +46,45 @@ public class UserService {
     }
 
     public boolean checkPassword(String plainPassword, String hashedPassword) {
-        return BCrypt.checkpw(plainPassword, hashedPassword);
+        // 调试：输出密码信息
+        System.out.println("=== Password Debug ===");
+        System.out.println("Plain password: " + plainPassword);
+        System.out.println("Hashed password: " + hashedPassword);
+        
+        try {
+            boolean result = BCrypt.checkpw(plainPassword, hashedPassword);
+            System.out.println("BCrypt check result: " + result);
+            return result;
+        } catch (Exception e) {
+            System.out.println("BCrypt check exception: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // 测试方法：生成正确的 BCrypt 密码哈希（用于验证）
+    public static String generatePasswordHash(String plainPassword) {
+        return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public User findById(Long userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
+
+    public User save(User user) {
+        user.setUpdatedAt(LocalDateTime.now());
+        return userRepository.save(user);
+    }
+
+    public void delete(Long userId) {
+        userRepository.deleteById(userId);
+    }
+
+    public long getTotalUsers() {
+        return userRepository.count();
     }
 }

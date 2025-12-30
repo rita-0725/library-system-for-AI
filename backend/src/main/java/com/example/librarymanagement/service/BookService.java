@@ -49,4 +49,12 @@ public class BookService {
             save(book);
         }
     }
+
+    public List<Book> findAll() {
+        return bookRepository.findAll();
+    }
+
+    public long getTotalBooks() {
+        return bookRepository.count();
+    }
 }

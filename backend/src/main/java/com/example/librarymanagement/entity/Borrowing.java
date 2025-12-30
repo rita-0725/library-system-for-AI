@@ -1,6 +1,7 @@
 package com.example.librarymanagement.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -16,6 +17,10 @@ public class Borrowing {
 
     @Column(name = "book_id", nullable = false)
     private Long bookId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    private Book book;
 
     @Column(nullable = false)
     private LocalDateTime borrowDate;
@@ -54,6 +59,9 @@ public class Borrowing {
 
     public Long getBookId() { return bookId; }
     public void setBookId(Long bookId) { this.bookId = bookId; }
+
+    public Book getBook() { return book; }
+    public void setBook(Book book) { this.book = book; }
 
     public LocalDateTime getBorrowDate() { return borrowDate; }
     public void setBorrowDate(LocalDateTime borrowDate) { this.borrowDate = borrowDate; }

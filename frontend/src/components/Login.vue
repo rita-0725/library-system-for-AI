@@ -38,9 +38,15 @@ export default {
           username: this.username,
           password: this.password
         })
+        
+        // 处理登陆响应
+        const data = response.data
         localStorage.setItem('token', 'dummy-token')
-        localStorage.setItem('username', this.username)
-        localStorage.setItem('role', 'user')
+        localStorage.setItem('userId', data.userId)
+        localStorage.setItem('username', data.username || this.username)
+        localStorage.setItem('role', data.role || 'user')
+        
+        console.log('Login successful:', { userId: data.userId, username: data.username, role: data.role })
         this.$router.push('/')
       } catch (err) {
         if (err.response && err.response.status === 400) {

@@ -28,14 +28,25 @@ export default {
   },
   methods: {
     logout() {
+      localStorage.removeItem('token')
+      localStorage.removeItem('username')
+      localStorage.removeItem('role')
       this.isLoggedIn = false
       this.isAdmin = false
       this.$router.push('/login')
+    },
+    checkAuth() {
+      this.isLoggedIn = !!localStorage.getItem('token')
+      this.isAdmin = localStorage.getItem('role') === 'admin'
+      console.log('Auth check:', { isLoggedIn: this.isLoggedIn, isAdmin: this.isAdmin, role: localStorage.getItem('role') })
     }
   },
   mounted() {
-    this.isLoggedIn = !!localStorage.getItem('token')
-    this.isAdmin = localStorage.getItem('role') === 'admin'
+    this.checkAuth()
+    // 监听路由变化
+    this.$router.afterEach(() => {
+      this.checkAuth()
+    })
   }
 }
 </script>
